@@ -9,10 +9,23 @@ label = Namn för att beskriva en adress i minnet. T.ex. namnet på en subrutin
 .align 4 = Sätt PC (programräknaren) på minnesadress som är jämnt delbar med 4
 .thumb = Säger åt processorn att programmet ska köras i thumb läge
 .global <label> = Säger åt kompilatorn vart programmet startar
+word = 32 bitar eller 4 bytes
+halfword = 16 bitar eller 2 bytes
+
+Strängar (.string), fields (.field) och bytes (.byte) är olika typer av instruktioner
+som man kan använda sig av för att spara data. .string sparar strängar och namnet som
+man ger stränen pekar på första bokstaven i strängen. Datan kommer med dessa kommandon att
+hamna i processorns flashminne.
+
+Värden som ligger i .field kan man ladda in med ldr. Namnet som man ger .fielden t.ex.
+buffer innehåller adressen där värdet finns lagrat. Det verkar inte som man kan använda
+adr för att lägga hela adressen från en .field i ett register (adressen består av för
+många bitar?). Kan man göra mov r0, #(buffer & 0xffff)
+movt r0, #(buffer >> 16) för att lägga adressen till .fileden i ett register?
 
 
 Använda instruktionen ldr:
-När man ska ladda in ett värde, en sträng eller bytes som ligger utanför processorns flashminne
+När man ska ladda in ett värde eller sträng som ligger utanför processorns flashminne
 (adresser > 0x0003 FFFF) så måste man använda sig utav instruktionen ldr (load). Ldr har
 följande syntax:
 
@@ -21,7 +34,11 @@ ldr <destinations_register>, adress
 
 Använda instruktion mov:
 Mov används när man ska kopiera värden mellan register. Man kan endast använda mov
-på register i processorns flashminne.
+på register i processorns flashminne. Man kan endast flytta på 16 bitar i taget med
+instruktionen mov. För att flytta 32 bitar måste man göra följande:
+
+mov r0, #(<värdet> & 0xffff)
+movt r0, #(<värdet> >> 16)
 
 Strängar:
 När man skapar en sträng är det viktigt att man skapar den när PC:n (programräknaren)
